@@ -1,6 +1,8 @@
 import os
 import requests
 import xml.etree.ElementTree as ET
+import re
+import time
 
 base_url = 'https://www.opensubtitles.org/'
 # human readable at https://www.opensubtitles.org/en/ssearch/sublanguageid-all/idmovie-185080
@@ -15,10 +17,10 @@ def download_file(url, filename):
     path = get_file_path(filename)
     if os.path.isfile(path):
         print(f'already downloaded "{url}" to "{filename}". delete to download again.')
-        return path
+        return path, False
     myfile = requests.get(url)
     open(path, 'wb').write(myfile.content)
-    return path
+    return path, True
 
 def get_xml_data(path):
     tree = ET.parse(path)
@@ -46,6 +48,10 @@ def get_xml_data(path):
 #     <MovieImdbRating>0.0</MovieImdbRating>
 # </subtitle>
 
+# one episode
+# xml https://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-3711092/xml
+# subtitle url english https://www.opensubtitles.org/en/subtitles/8100367/last-week-tonight-with-john-oliver-climate-change-denial-en
+
 def get_index_data(path):
     # example: https://docs.python.org/3/library/xml.etree.elementtree.html
     index_data = get_xml_data(path)
@@ -54,10 +60,38 @@ def get_index_data(path):
             'season': int(episode.findtext('SeriesSeason')),
             'episode': int(episode.findtext('SeriesEpisode')),
             'episode_name': episode.findtext('MovieName'),
-            'link': episode.find('EpisodeName').get('Link')
+            'link': episode.find('EpisodeName').get('Link'),
         }
+
+def download_episode(episode):
+    safe_episode_name = re.sub('\\W+', '', episode["episode_name"])
+    id = episode["link"].split('-')[1]
+    base_file_name = f'lwtwjo_s{episode["season"]:02d}e{episode["episode"]:02d}_{id}_{safe_episode_name}'
+    # xml_path = get_file_path(base_file_name + '.xml')
+    xml_url = f'https://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-{id}/xml'
+    xml_path, downloaded_xml = download_file(xml_url, base_file_name + '.xml')
+    print('\t' + base_file_name)
+    data = get_xml_data(xml_path)
+    download_links_element = data.find(f'./search/results/subtitle[LanguageName=\'English\'][SubFormat=\'srt\']/IDSubtitle')
+    if download_links_element == None:
+        print("\t!! Can't find XML element with English subtitles")
+        return False
+    download_link = download_links_element.get('LinkDownload')
+    print('\tdownloading ' + download_link)
+    zip_url, downloaded_zip = download_file(download_link, base_file_name + '.zip')
+    return downloaded_xml or downloaded_zip
+
+def download_all(episodes):
+    for episode in episodes:
+        downloaded = download_episode(episode)
+        # don't be hasty.
+        if downloaded:
+            time.sleep(20)
     
 
-index_file_path = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
-index_data = get_index_data(index_file_path)
-print(list(index_data))
+index_file_path, _ = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
+index_data = list(get_index_data(index_file_path))
+index_data = index_data[0:62]
+print(len(index_data))
+download_all(index_data)
+# download_episode(index_data[11])
