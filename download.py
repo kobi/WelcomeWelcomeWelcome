@@ -20,20 +20,11 @@ def download_file(url, filename):
     if os.path.isfile(path):
         print(f'already downloaded "{url}" to "{filename}". delete to download again.')
         return path, False
-    # Cookie: searchform=formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C; 
-    # OAID=e6688f9cf368b6cbe6ca1b0c61cfa893; pref_mk=%7B%22tv%22%3A2%2C%22m%22%3A0%7D; PHPSESSID=wzGdtRpZx-u18WRVXWCVG6h9iF8
-    # cookies = {
-    #     "searchform":"formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C",
-    #     "OAID":"e6688f9cf368b6cbe6ca1b0c61cfa893",
-    #     "pref_mk":"%7B%22tv%22%3A2%2C%22m%22%3A0%7D",
-    #     "PHPSESSID":"wzGdtRpZx-u18WRVXWCVG6h9iF8",
-    # }
 
-    # PHPSESSID=IPBbIWNVzyglkMVPWBM1-55h7F1; 
-    # searchform=formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C
+    # to get the session id - clear all cookies under opensubtitles.org in your browser, try to download a subtitle file and solve the captch. then copy the new session id here.
     cookies = {
         "searchform":"formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C",
-        "PHPSESSID":"IPBbIWNVzyglkMVPWBM1-55h7F1",
+        "PHPSESSID":"JUtzdSYXOP3oNd2soR9vvqlUqu0",
     }
     
     response = requests.get(url, cookies=cookies)
@@ -123,7 +114,7 @@ def download_all(episodes):
 
 index_file_path, _ = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
 index_data = list(get_index_data(index_file_path))
-index_data = index_data[0:150]
+index_data = index_data[140:190]
 print(len(index_data))
 download_all(index_data)
 # download_episode(index_data[11])
