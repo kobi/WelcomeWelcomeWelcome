@@ -9,6 +9,8 @@ base_url = 'https://www.opensubtitles.org/'
 # allEpisodesIndex = 'https://www.opensubtitles.org/en/ssearch/sublanguageid-all/idmovie-185080/xml'
 allEpisodesIndex = 'https://www.opensubtitles.org/en/ssearch/sublanguageid-en/idmovie-185080/xml'
 
+# not too related: https://blog.parse.ly/post/2380/measuring-the-impact-of-the-john-oliver-effect/
+
 def get_file_path(filename):
     script_folder = os.path.dirname(os.path.realpath(__file__))
     return os.path.join(script_folder, 'data', filename)
@@ -18,8 +20,27 @@ def download_file(url, filename):
     if os.path.isfile(path):
         print(f'already downloaded "{url}" to "{filename}". delete to download again.')
         return path, False
-    myfile = requests.get(url)
-    open(path, 'wb').write(myfile.content)
+    # Cookie: searchform=formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C; 
+    # OAID=e6688f9cf368b6cbe6ca1b0c61cfa893; pref_mk=%7B%22tv%22%3A2%2C%22m%22%3A0%7D; PHPSESSID=wzGdtRpZx-u18WRVXWCVG6h9iF8
+    # cookies = {
+    #     "searchform":"formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C",
+    #     "OAID":"e6688f9cf368b6cbe6ca1b0c61cfa893",
+    #     "pref_mk":"%7B%22tv%22%3A2%2C%22m%22%3A0%7D",
+    #     "PHPSESSID":"wzGdtRpZx-u18WRVXWCVG6h9iF8",
+    # }
+
+    # PHPSESSID=IPBbIWNVzyglkMVPWBM1-55h7F1; 
+    # searchform=formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C
+    cookies = {
+        "searchform":"formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C",
+        "PHPSESSID":"IPBbIWNVzyglkMVPWBM1-55h7F1",
+    }
+    
+    response = requests.get(url, cookies=cookies)
+    print('\t\tContent-Type=' +  response.headers.get("Content-Type"))
+    if response.headers.get("Content-Type") != 'application/zip':
+        raise('Please solve a captcha and update cookies: ' + url)
+    open(path, 'wb').write(response.content)
     return path, True
 
 def get_xml_data(path):
@@ -63,6 +84,10 @@ def get_index_data(path):
             'link': episode.find('EpisodeName').get('Link'),
         }
 
+# some URLs have problems?
+skip_ids = ['XXX6144622']
+
+
 def download_episode(episode):
     safe_episode_name = re.sub('\\W+', '', episode["episode_name"])
     id = episode["link"].split('-')[1]
@@ -70,6 +95,10 @@ def download_episode(episode):
     # xml_path = get_file_path(base_file_name + '.xml')
     xml_url = f'https://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-{id}/xml'
     xml_path, downloaded_xml = download_file(xml_url, base_file_name + '.xml')
+    
+    # skip zip files for now.
+    # return downloaded_xml
+
     print('\t' + base_file_name)
     data = get_xml_data(xml_path)
     download_links_element = data.find(f'./search/results/subtitle[LanguageName=\'English\'][SubFormat=\'srt\']/IDSubtitle')
@@ -78,6 +107,9 @@ def download_episode(episode):
         return False
     download_link = download_links_element.get('LinkDownload')
     print('\tdownloading ' + download_link)
+    if id in skip_ids:
+        print(f'\t\t!! skipping over {id}')
+        return False
     zip_url, downloaded_zip = download_file(download_link, base_file_name + '.zip')
     return downloaded_xml or downloaded_zip
 
@@ -86,12 +118,12 @@ def download_all(episodes):
         downloaded = download_episode(episode)
         # don't be hasty.
         if downloaded:
-            time.sleep(20)
+            time.sleep(100)
     
 
 index_file_path, _ = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
 index_data = list(get_index_data(index_file_path))
-index_data = index_data[0:62]
+index_data = index_data[0:150]
 print(len(index_data))
 download_all(index_data)
 # download_episode(index_data[11])
