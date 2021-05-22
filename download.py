@@ -3,8 +3,9 @@ import requests
 import xml.etree.ElementTree as ET
 import re
 import time
+import zipfile
+import json
 
-base_url = 'https://www.opensubtitles.org/'
 # human readable at https://www.opensubtitles.org/en/ssearch/sublanguageid-all/idmovie-185080
 # allEpisodesIndex = 'https://www.opensubtitles.org/en/ssearch/sublanguageid-all/idmovie-185080/xml'
 allEpisodesIndex = 'https://www.opensubtitles.org/en/ssearch/sublanguageid-en/idmovie-185080/xml'
@@ -21,12 +22,18 @@ def download_file(url, filename):
         print(f'already downloaded "{url}" to "{filename}". delete to download again.')
         return path, False
 
-    # to get the session id - clear all cookies under opensubtitles.org in your browser, try to download a subtitle file and solve the captch. then copy the new session id here.
+    # to get the session id - clear all cookies under opensubtitles.org in your browser,
+    # try to download a subtitle file and solve the captch. then copy the new session id here.
     cookies = {
         "searchform":"formname%3Dsearchform%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C1%7C%7C%7C1%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C%7C",
-        "PHPSESSID":"JUtzdSYXOP3oNd2soR9vvqlUqu0",
+        "PHPSESSID":"XXXXXXXXXXXXXXXXXXXXXXXX",
     }
-    
+
+    # after a few hundred files:
+    #   Sorry, maximum download count for IP: {ip} exceeded. If you will continue trying to download, 
+    #   your IP will be blocked by our firewall. For more information read our FAQ or contact us, if you think
+    #   you should not see this error. This deny will be removed after around 24 hours, so be patient.
+
     response = requests.get(url, cookies=cookies)
     print('\t\tContent-Type=' +  response.headers.get("Content-Type"))
     if response.headers.get("Content-Type") != 'application/zip':
@@ -51,7 +58,7 @@ def get_xml_data(path):
 #     <Newest time='19:31:05' rfc822='Tue, 18 Feb 2020 19:31:05 CET' rfc3339='2020-02-18T19:31:05+0100' time_locale='19:31:05' date_locale='18/02/2020' ISO8601='2020-02-18T19:31:05+01:00'>2020-02-18</Newest>
 # </subtitle>
 
-# english only index
+# english only index has fewer fields
 # <subtitle>
 #     <MovieName><![CDATA[Lead]]></MovieName>
 #     <EpisodeName Link='/en/upload/idmovieimdb-5605696' ImdbLink='http://www.imdb.com/title/tt5605696/'><![CDATA[Lead]]></EpisodeName>
@@ -75,10 +82,6 @@ def get_index_data(path):
             'link': episode.find('EpisodeName').get('Link'),
         }
 
-# some URLs have problems?
-skip_ids = ['XXX6144622']
-
-
 def download_episode(episode):
     safe_episode_name = re.sub('\\W+', '', episode["episode_name"])
     id = episode["link"].split('-')[1]
@@ -98,10 +101,12 @@ def download_episode(episode):
         return False
     download_link = download_links_element.get('LinkDownload')
     print('\tdownloading ' + download_link)
-    if id in skip_ids:
-        print(f'\t\t!! skipping over {id}')
-        return False
-    zip_url, downloaded_zip = download_file(download_link, base_file_name + '.zip')
+    zip_path, downloaded_zip = download_file(download_link, base_file_name + '.zip')
+    srt_path = get_file_path(base_file_name + '.srt')
+    episode['id'] = id
+    episode['zip_path'] = zip_path
+    episode['srt_path'] = srt_path
+    episode['json_path'] =  get_file_path(base_file_name + '.json')
     return downloaded_xml or downloaded_zip
 
 def download_all(episodes):
@@ -110,11 +115,29 @@ def download_all(episodes):
         # don't be hasty.
         if downloaded:
             time.sleep(100)
+        unzip_srt(episode['zip_path'], episode['srt_path'])
+        save_json(episode, episode['json_path'])
     
+def unzip_srt(zip_path, target_srt_path):
+    if os.path.isfile(target_srt_path):
+        return
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        srt_file_info = next(f for f in zip_ref.filelist if f.filename.endswith('.srt'))
+        #for f in zip_ref.filelist:
+        #    print(f)
+        folder = os.path.dirname(target_srt_path)
+        temp_srt_path = zip_ref.extract(srt_file_info, path=folder)
+        os.rename(temp_srt_path, target_srt_path)
+        #zip_ref.extractall(directory_to_extract_to)
+
+def save_json(dict, json_path):
+    if os.path.isfile(json_path):
+        return
+    with open(json_path, 'w') as outfile: 
+        json.dump(dict, outfile, indent=4)
 
 index_file_path, _ = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
 index_data = list(get_index_data(index_file_path))
-index_data = index_data[140:190]
 print(len(index_data))
+
 download_all(index_data)
-# download_episode(index_data[11])
