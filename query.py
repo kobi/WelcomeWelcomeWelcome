@@ -8,7 +8,7 @@ from itertools import groupby, chain
 query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
     {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
-    {'title': 'Void', 'pattern':[r'\bvoid\b']},
+    {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
     {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
     {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']}
