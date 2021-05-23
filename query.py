@@ -1,16 +1,16 @@
 import json
 import os
 import glob
-# from os.path import join, split
 import re
 from datetime import timedelta
+from itertools import groupby, chain
 
 query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
     {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
-    {'title': 'Void', 'pattern':['void']},
+    {'title': 'Void', 'pattern':[r'\bvoid\b']},
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
-    {'title': 'it\'s true!', 'pattern':['it.?s', 'true']},
+    {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
     {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']}
 ]
 
@@ -71,18 +71,40 @@ def query_episode(episode, query):
             yield {
                 'quote_title': quote['title'],
                 'quote_index': quote_index,
-                'times': [srt_timestamp_to_seconds(m.group(1)) for m in matches]
+                'times': list([srt_timestamp_to_seconds(m.group(1)) for m in matches])
             }
 
 def query_all_episodes(episodes, query):
     for episode in episodes:
+        quotes = list(query_episode(episode, query))
         yield {
+            'quotes': quotes,
             'season': episode['season'],
             'episode': episode['episode'],
             'episode_name': episode['episode_name'],
-            # 'episode_length': episode['episode_length'], # not there - it's in each quote beacuse we only open the file there
-            'quotes': list(query_episode(episode, query))
+            'episode_length': episode['episode_length']
         }
+
+# remove episodes, rerun groups by quotes
+def combine_quotes(episodes):
+    f = list(chain(*[ep['quotes'] for ep in episodes]))
+    s = sorted(f, key=lambda q: q['quote_title'])
+    for key, quotes_in_group in groupby(s, lambda q: q['quote_title']):
+        quotes = list(quotes_in_group)
+        first = quotes[0]
+        all_times = list(chain(*[q['times'] for q in quotes]))
+        yield {
+            'quote_title': key,
+            'quote_index': first['quote_index'],
+            'times': sorted(all_times),
+            'total_count': len(all_times)
+        }
+
+def get_statistics_by_group(full_report, key_func):
+    s = list(sorted(full_report, key=key_func))
+    for key, episodes in groupby(s, key_func):
+        combined = list(combine_quotes(list(episodes)))
+        yield (key, combined)
 
 episodes = list(get_all_episodes())
 print(len(episodes))
@@ -91,5 +113,20 @@ print(len(episodes))
 # print(ep)
 
 report = list(query_all_episodes(episodes, query_welcome_welcome_welcome))
+print('report:')
 print(report)
 
+print('groups:')
+report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
+print('report_per_season = ', report_per_season)
+
+report_total = list(get_statistics_by_group(report, lambda _: 'all'))
+print('report_total = ', report_total)
+
+report_total = list(get_statistics_by_group(report, lambda _: 'all'))
+print('report_total = ', report_total)
+
+#report_total = list(get_statistics_by_group(report, lambda _: 'all'))
+print('report_total = ', report_total)
+print('report_total = ', report_total)
+print('report_total = ', report_total)
