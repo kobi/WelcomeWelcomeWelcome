@@ -4,6 +4,8 @@ import glob
 import re
 from datetime import timedelta
 from itertools import groupby, chain
+from sre_constants import CH_UNICODE
+import html
 
 query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
@@ -106,11 +108,38 @@ def get_statistics_by_group(full_report, key_func):
         combined = list(combine_quotes(list(episodes)))
         yield (key, combined)
 
-episodes = list(get_all_episodes())
-print(len(episodes))
+def full_report_to_html(report, query):
+    by_season = groupby(report, lambda episode: episode['season'])
+    html_chunks = []
+    # let's write html like it's 1999.
+    html_chunks.append(f'<div class="chart">')
+    for season, episodes in by_season:
+        html_chunks.append(f'<div class="season season{season:02d}" data-season="{season:02d}">')
+        for episode in episodes:
+            episode_length = episode['episode_length']
+            html_chunks.append(f'  <div class="episode episode{episode["episode"]:02d}" data-episode-length="{episode_length}">')
+            for quote in episode['quotes']:
+                quote_index = quote['quote_index']
+                for timestamp_seconds in quote['times']:
+                    relative_position =  100*timestamp_seconds / episode_length
+                    relative_position_int =  round(relative_position)
+                    title = html.escape(quote["quote_title"])
+                    html_chunks.append(f'    <div class="marker market{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_int}">')
+                    html_chunks.append('    </div>')
+            html_chunks.append('  </div>')
+        html_chunks.append('</div>')
+    html_chunks.append('  <div class="ledend">')
+    for i, q in enumerate(query):
+        title = html.escape(q["title"])
+        html_chunks.append(f'   <div class="group group{i}" data-title="{title}"></div>')
+    html_chunks.append('  </div>')
 
-# ep = list(query_episode(episodes[100], query_welcome_welcome_welcome))
-# print(ep)
+    html_chunks.append('</div>')    
+    return "\n".join(html_chunks)
+
+episodes = list(get_all_episodes())
+episodes = episodes[80:130]
+print(len(episodes))
 
 report = list(query_all_episodes(episodes, query_welcome_welcome_welcome))
 print('report:')
@@ -123,10 +152,4 @@ print('report_per_season = ', report_per_season)
 report_total = list(get_statistics_by_group(report, lambda _: 'all'))
 print('report_total = ', report_total)
 
-report_total = list(get_statistics_by_group(report, lambda _: 'all'))
-print('report_total = ', report_total)
-
-#report_total = list(get_statistics_by_group(report, lambda _: 'all'))
-print('report_total = ', report_total)
-print('report_total = ', report_total)
-print('report_total = ', report_total)
+print(full_report_to_html(report, query_welcome_welcome_welcome))
