@@ -9,6 +9,8 @@ import html
 
 query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
+    {'title': 'I\'m John Oliver', 'pattern':['i.?m', 'john', 'oliver']},
+    {'title': 'Thank you for joining us', 'pattern':['Thank', 'you(?: so much)?', 'for', 'joining', 'us']},
     {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
     {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
@@ -37,7 +39,6 @@ def get_all_episodes():
             data = json.load(f)
             yield data
 
-
 # preview:
 #   7
 #   00:00:40,440 --> 00:00:44,600
@@ -61,10 +62,30 @@ def get_episode_length_seconds(full_srt_string):
     last_timestamp = re.findall(r'\d\d:\d\d:\d\d,\d{3}', full_srt_string)[-1]
     return srt_timestamp_to_seconds(last_timestamp)
 
+def remove_duplicated_lines(full_srt_string):
+    # remove repeated sentences from subtitles. can't tell if really said twice or just written twice. :(
+    # example: s05e18
+    # 192
+    # 00:05:29,697 --> 00:05:31,963
+    # LOOK, $120 BILLION IS A LOT OF
+    # MONEY.
+
+    # 193
+    # 00:05:31,965 --> 00:05:32,698
+    # MONEY.
+    # FOR CONTEXT, IT IS MORE THAN THE
+
+    # 194
+    # 00:05:32,700 --> 00:05:33,932
+    # FOR CONTEXT, IT IS MORE THAN THE
+    # SIZE OF THE ENTIRE GLOBAL CHEESE
+    return re.sub(r'(^\S.+\n)(?=\n\d+\n.*-->.*\n\1)', '[xxxxxxxxxxxxxxxxxxxxxxxxx]', full_srt_string, flags= re.MULTILINE)
+
 def query_episode(episode, query):
     print(episode['srt_path'])
     with open(episode['srt_path'], 'r') as file:
         full_srt_string = file.read()
+    full_srt_string = remove_duplicated_lines(full_srt_string)
     episode['episode_length'] = get_episode_length_seconds(full_srt_string)
     for quote_index, quote in enumerate(query):
         str_regex = pattern_to_regex(quote['pattern'])
@@ -121,8 +142,8 @@ def full_report_to_html(report, query):
             for quote in episode['quotes']:
                 quote_index = quote['quote_index']
                 for timestamp_seconds in quote['times']:
-                    relative_position =  100*timestamp_seconds / episode_length
-                    relative_position_int =  round(relative_position)
+                    relative_position = 100*timestamp_seconds / episode_length
+                    relative_position_int = round(relative_position)
                     title = html.escape(quote["quote_title"])
                     html_chunks.append(f'    <div class="marker market{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_int}">')
                     html_chunks.append('    </div>')
@@ -138,18 +159,18 @@ def full_report_to_html(report, query):
     return "\n".join(html_chunks)
 
 episodes = list(get_all_episodes())
-episodes = episodes[80:130]
+episodes = episodes[120:140]
 print(len(episodes))
 
-report = list(query_all_episodes(episodes, query_welcome_welcome_welcome))
-print('report:')
+report = list(query_all_episodes(episodes, query_test))
+# print('report:')
 print(report)
 
-print('groups:')
-report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
-print('report_per_season = ', report_per_season)
+# print('groups:')
+# report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
+# print('report_per_season = ', report_per_season)
 
 report_total = list(get_statistics_by_group(report, lambda _: 'all'))
 print('report_total = ', report_total)
 
-print(full_report_to_html(report, query_welcome_welcome_welcome))
+# print(full_report_to_html(report, query_welcome_welcome_welcome))
