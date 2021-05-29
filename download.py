@@ -36,7 +36,8 @@ def download_file(url, filename):
 
     response = requests.get(url, cookies=cookies)
     print('\t\tContent-Type=' +  response.headers.get("Content-Type"))
-    if response.headers.get("Content-Type") != 'application/zip':
+    if filename.endswith('.zip') and response.headers.get("Content-Type") != 'application/zip':
+        print(f'error downloading "{url}" to "!{filename}".')
         raise('Please solve a captcha and update cookies: ' + url)
     open(path, 'wb').write(response.content)
     return path, True
