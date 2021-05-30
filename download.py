@@ -12,9 +12,9 @@ allEpisodesIndex = 'https://www.opensubtitles.org/en/ssearch/sublanguageid-en/id
 
 # not too related: https://blog.parse.ly/post/2380/measuring-the-impact-of-the-john-oliver-effect/
 
-def get_file_path(filename):
+def get_file_path(filename, sub_folder = 'data'):
     script_folder = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(script_folder, 'data', filename)
+    return os.path.join(script_folder, sub_folder, filename)
 
 def download_file(url, filename):
     path = get_file_path(filename)
@@ -137,8 +137,9 @@ def save_json(dict, json_path):
     with open(json_path, 'w') as outfile: 
         json.dump(dict, outfile, indent=4)
 
-index_file_path, _ = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
-index_data = list(get_index_data(index_file_path))
-print(len(index_data))
+if __name__ == "__main__":
+    index_file_path, _ = download_file(allEpisodesIndex, 'last_week_tonight_index_en.xml')
+    index_data = list(get_index_data(index_file_path))[-5:]
+    print(len(index_data))
 
-download_all(index_data)
+    download_all(index_data)
