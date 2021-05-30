@@ -50,10 +50,22 @@ def get_all_episodes():
 # * allows skipping non-empty lines (so still on same entry)
 # * matches each word in the pattern
 #   * allows only non-words between these words. this may cross over to the next timestamp entry.
+# NOT USING IT.
+# this is a single pattern, but we can't find multiple matches on the same block beacuse the timespan is consumed.
+# instead we're using pattern_to_regex_words_only and get_timespan_of_position
 def pattern_to_regex(pattern):
     return re.compile(r'^\d+$\r?\n(^\d\d:\d\d:\d\d,\d{3})\s*-->.*\r?\n(?:.+\r?\n)*.*' + '[^a-z]+'.join(pattern), re.IGNORECASE | re.MULTILINE)
 
-def srt_timestamp_to_seconds(srt_timestamp):
+def pattern_to_regex_words_only(pattern):
+    return re.compile(r'[^a-z]+'.join(pattern), re.IGNORECASE | re.MULTILINE)
+
+# find the first timespamp before the osition of the match.
+def get_timespan_of_position(srt_string: str, position: int) -> int:
+    srt_string = srt_string[:position]
+    last_timestamp = re.findall(r'^\d\d:\d\d:\d\d,\d{3}(?=\s*-->)', srt_string, re.MULTILINE)[-1]
+    return srt_timestamp_to_seconds(last_timestamp)
+
+def srt_timestamp_to_seconds(srt_timestamp: str) -> int:
     times = re.split(r'[:,]', srt_timestamp)
     ts = timedelta(hours=int(times[0]), minutes=int(times[1]),seconds=int(times[2]))
     return int(ts.total_seconds())
@@ -88,13 +100,13 @@ def query_episode(episode, query):
     full_srt_string = remove_duplicated_lines(full_srt_string)
     episode['episode_length'] = get_episode_length_seconds(full_srt_string)
     for quote_index, quote in enumerate(query):
-        str_regex = pattern_to_regex(quote['pattern'])
+        str_regex = pattern_to_regex_words_only(quote['pattern'])
         matches = list(str_regex.finditer(full_srt_string))
         if matches:
             yield {
                 'quote_title': quote['title'],
                 'quote_index': quote_index,
-                'times': list([srt_timestamp_to_seconds(m.group(1)) for m in matches])
+                'times': list([get_timespan_of_position(full_srt_string, m.start()) for m in matches])
             }
 
 def query_all_episodes(episodes, query):
@@ -159,16 +171,16 @@ def full_report_to_html(report, query):
     return "\n".join(html_chunks)
 
 episodes = list(get_all_episodes())
-episodes = episodes[120:140]
+episodes = episodes #[120:140]
 print(len(episodes))
 
-report = list(query_all_episodes(episodes, query_test))
+report = list(query_all_episodes(episodes, query_welcome_welcome_welcome))
 # print('report:')
 print(report)
 
-# print('groups:')
-# report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
-# print('report_per_season = ', report_per_season)
+print('groups:')
+report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
+print('report_per_season = ', report_per_season)
 
 report_total = list(get_statistics_by_group(report, lambda _: 'all'))
 print('report_total = ', report_total)
