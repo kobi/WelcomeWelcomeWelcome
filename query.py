@@ -1,3 +1,4 @@
+from download import get_file_path
 import json
 import os
 import glob
@@ -16,6 +17,14 @@ query_welcome_welcome_welcome = [
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
     {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
     {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']}
+]
+
+query_presidents = [
+    {'title':'Bush', 'pattern': [r'\bbush']},
+    {'title':'Obama', 'pattern': [r'\bobama']},
+    {'title':'Clinton', 'pattern': [r'\bclinton']},
+    {'title':'Trump', 'pattern': [r'\btrump']},
+    {'title':'Biden', 'pattern': [r'\bbiden']},
 ]
 
 query_test = [
@@ -157,32 +166,60 @@ def full_report_to_html(report, query):
                     relative_position = 100*timestamp_seconds / episode_length
                     relative_position_int = round(relative_position)
                     title = html.escape(quote["quote_title"])
-                    html_chunks.append(f'    <div class="marker market{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_int}">')
+                    html_chunks.append(f'    <div class="marker marker{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_int}" style="left: {relative_position_int}%;">')
                     html_chunks.append('    </div>')
             html_chunks.append('  </div>')
         html_chunks.append('</div>')
     html_chunks.append('  <div class="ledend">')
     for i, q in enumerate(query):
         title = html.escape(q["title"])
-        html_chunks.append(f'   <div class="group group{i}" data-title="{title}"></div>')
+        html_chunks.append(f'   <div class="group group{i}">{title}</div>')
     html_chunks.append('  </div>')
 
     html_chunks.append('</div>')    
     return "\n".join(html_chunks)
 
+
+def build_html_report(report_name: str, query):
+    report = list(query_all_episodes(episodes, query))
+    # print('report:')
+    # print(report)
+
+    with open('template.html', 'r') as file:
+        html_template = file.read()
+
+
+    full_report_html = full_report_to_html(report, query)
+
+    print('groups:')
+    report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
+    print('report_per_season = ', report_per_season)
+
+    report_total = list(get_statistics_by_group(report, lambda _: 'Total'))
+    print('report_total = ', report_total)
+
+    final_html = html_template.replace('{chart}', '\n\n'.join([full_report_html]))
+
+    with open(get_file_path(f'report_{report_name}.html', 'reports'), 'w') as report_file: 
+        report_file.write(final_html)
+
+
+
 episodes = list(get_all_episodes())
-episodes = episodes #[120:140]
 print(len(episodes))
 
-report = list(query_all_episodes(episodes, query_welcome_welcome_welcome))
-# print('report:')
-print(report)
+# report = list(query_all_episodes(episodes, query_presidents))
+# # print('report:')
+# print(report)
 
-print('groups:')
-report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
-print('report_per_season = ', report_per_season)
+# print('groups:')
+# report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
+# print('report_per_season = ', report_per_season)
 
-report_total = list(get_statistics_by_group(report, lambda _: 'all'))
-print('report_total = ', report_total)
+# report_total = list(get_statistics_by_group(report, lambda _: 'Total'))
+# print('report_total = ', report_total)
 
-# print(full_report_to_html(report, query_welcome_welcome_welcome))
+# # print(full_report_to_html(report, query_welcome_welcome_welcome))
+
+build_html_report('welcome', query_welcome_welcome_welcome)
+build_html_report('presidents', query_presidents)
