@@ -164,16 +164,16 @@ def full_report_to_html(report, query):
                 quote_index = quote['quote_index']
                 for timestamp_seconds in quote['times']:
                     relative_position = 100*timestamp_seconds / episode_length
-                    relative_position_int = round(relative_position)
+                    relative_position_round = round(relative_position, 2)
                     title = html.escape(quote["quote_title"])
-                    html_chunks.append(f'    <div class="marker marker{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_int}" style="left: {relative_position_int}%;">')
+                    html_chunks.append(f'    <div class="marker marker{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_round}" style="left: {relative_position_round}%;">')
                     html_chunks.append('    </div>')
             html_chunks.append('  </div>')
         html_chunks.append('</div>')
     html_chunks.append('  <div class="ledend">')
     for i, q in enumerate(query):
         title = html.escape(q["title"])
-        html_chunks.append(f'   <div class="group group{i}">{title}</div>')
+        html_chunks.append(f'   <div class="group group{i}"><div class="marker marker{i}"></div>{title}</div>')
     html_chunks.append('  </div>')
 
     html_chunks.append('</div>')    
