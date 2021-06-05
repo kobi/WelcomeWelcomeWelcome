@@ -1,3 +1,4 @@
+from typing import List
 from download import get_file_path
 import json
 import os
@@ -150,11 +151,11 @@ def get_statistics_by_group(full_report, key_func):
         combined = list(combine_quotes(list(episodes)))
         yield (key, combined)
 
-def full_report_to_html(report, query):
+def full_report_to_html(report, query, css_classes: List[str]):
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
-    html_chunks.append(f'<div class="chart">')
+    html_chunks.append(f'<div class="chart {" ".join(css_classes)}">')
     for season, episodes in by_season:
         html_chunks.append(f'<div class="season season{season:02d}" data-season="{season:02d}">')
         for episode in episodes:
@@ -180,7 +181,7 @@ def full_report_to_html(report, query):
     return "\n".join(html_chunks)
 
 
-def build_html_report(report_name: str, query):
+def build_html_report(report_name: str, query, css_classes: List[str]):
     report = list(query_all_episodes(episodes, query))
     # print('report:')
     # print(report)
@@ -189,7 +190,7 @@ def build_html_report(report_name: str, query):
         html_template = file.read()
 
 
-    full_report_html = full_report_to_html(report, query)
+    full_report_html = full_report_to_html(report, query, [report_name] + css_classes)
 
     print('groups:')
     report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
@@ -221,5 +222,5 @@ print(len(episodes))
 
 # # print(full_report_to_html(report, query_welcome_welcome_welcome))
 
-build_html_report('welcome', query_welcome_welcome_welcome)
-build_html_report('presidents', query_presidents)
+build_html_report('welcome', query_welcome_welcome_welcome, ['abacus'])
+build_html_report('presidents', query_presidents, [])
