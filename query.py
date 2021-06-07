@@ -17,20 +17,31 @@ query_welcome_welcome_welcome = [
     {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
     {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
-    {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']}
+    {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']},
 ]
 
 query_presidents = [
-    {'title':'Bush', 'pattern': [r'\bbush']},
+    # {'title':'Bush', 'pattern': [r'\bbush']}, # alsmost no mentiones of Bush
     {'title':'Obama', 'pattern': [r'\bobama']},
     {'title':'Clinton', 'pattern': [r'\bclinton']},
     {'title':'Trump', 'pattern': [r'\btrump']},
     {'title':'Biden', 'pattern': [r'\bbiden']},
 ]
 
+query_parties = [
+    {'title':'Democrats', 'pattern': [r'\bdemocrat']},
+    {'title':'Republicans', 'pattern': [r'\brepublican|\bg\.?o\.p\b']},
+]
+
+query_seasonal = [
+    {'title':'Peeps', 'pattern': [r'\bpeeps']},
+    {'title':'Pumpkin Spice', 'pattern': ['pumpkin', 'spice']},
+    {'title':'Adam Driver', 'pattern': ['adam', 'driver']},
+]
+
 query_test = [
     {'title':'lines', 'pattern': ['on','site', 'as', 'this', 'old']},
-    {'title':'on site', 'pattern': ['on','site', 'as']}
+    {'title':'on site', 'pattern': ['on','site', 'as']},
 ]
 
 # presidents?
@@ -223,5 +234,7 @@ print(len(episodes))
 
 build_html_file([
     build_html_report('welcome', query_welcome_welcome_welcome, ['abacus']),
-    build_html_report('presidents', query_presidents, [])
+    build_html_report('presidents', query_presidents, ['demrep']),
+    build_html_report('parties', query_parties, ['demrep']),
+    build_html_report('seasonal', query_seasonal, []),
 ])

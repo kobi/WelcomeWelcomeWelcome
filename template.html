@@ -9,15 +9,17 @@
             font-family: sans-serif;
             font-size: 14px;
             text-rendering: optimizeSpeed;
-            --episode-bg: #0002;
+            --episode-bg: #00000011;
             --marger-size: 10px;
+            --bg-light:rgb(245, 245, 245);
+            --bg-lighter:rgb(252, 252, 252);
         }
 
         * { box-sizing: border-box; }
 
         .chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 600px; margin: 0 auto; }
-        .season { flex: auto; width: 12%; background-color: antiquewhite; padding: 4px; }
-        .season:nth-child(2n) { background-color:beige; }
+        .season { flex: auto; width: 12%; background-color: var(--bg-light); padding: 4px; }
+        .season:nth-child(2n) { background-color:var(--bg-lighter); }
         .episode {height: 10px;  margin: 1pt 0 0; position: relative;
           background-color: var(--episode-bg); 
           /* right border: 10px to offset marker size. transparent beacuse background is visible anyway */
@@ -26,6 +28,17 @@
             width: var(--marger-size);
             position: absolute; left:100%; top:0; bottom: 0;
         }
+
+        .demrep .season01, .demrep .season02, .demrep .season03, .demrep .season08 { background-color: var(--bg-light); }
+        .demrep .season04, .demrep .season05, .demrep .season06, .demrep .season07 { background-color: var(--bg-lighter); }
+
+        .presidents .marker0 {background-color:#56c265;} /* Obama */
+        .presidents .marker1 {background-color:#ffc421;} /* Clinton */
+        .presidents .marker2 {background-color:#a51a1f; z-index: 0;} /* Trump */
+        .presidents .marker3 {background-color:#6695db;} /* Biden */
+
+        .parties .marker0 {background-color:#6695db;} /* democrats */
+        .parties .marker1 {background-color:#a51a1f; z-index: 0;} /* repuclicans */
 
         .abacus .episode {height: 1pt; margin-top:12px; margin-bottom: 12px;}
 
