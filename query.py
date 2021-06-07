@@ -183,13 +183,6 @@ def full_report_to_html(report, query, css_classes: List[str]):
 
 def build_html_report(report_name: str, query, css_classes: List[str]):
     report = list(query_all_episodes(episodes, query))
-    # print('report:')
-    # print(report)
-
-    with open('template.html', 'r') as file:
-        html_template = file.read()
-
-
     full_report_html = full_report_to_html(report, query, [report_name] + css_classes)
 
     print('groups:')
@@ -199,12 +192,14 @@ def build_html_report(report_name: str, query, css_classes: List[str]):
     report_total = list(get_statistics_by_group(report, lambda _: 'Total'))
     print('report_total = ', report_total)
 
-    final_html = html_template.replace('{chart}', '\n\n'.join([full_report_html]))
+    return '\n\n'.join([full_report_html])
 
-    with open(get_file_path(f'report_{report_name}.html', 'reports'), 'w') as report_file: 
+def build_html_file(html_snippets: List[str]):
+    with open('template.html', 'r') as file:
+        html_template = file.read()
+    final_html = html_template.replace('{chart}', '\n\n'.join(html_snippets))
+    with open(get_file_path(f'report.html', 'reports'), 'w') as report_file: 
         report_file.write(final_html)
-
-
 
 episodes = list(get_all_episodes())
 print(len(episodes))
@@ -222,5 +217,7 @@ print(len(episodes))
 
 # # print(full_report_to_html(report, query_welcome_welcome_welcome))
 
-build_html_report('welcome', query_welcome_welcome_welcome, ['abacus'])
-build_html_report('presidents', query_presidents, [])
+build_html_file([
+        build_html_report('welcome', query_welcome_welcome_welcome, ['abacus']),
+        build_html_report('presidents', query_presidents, [])
+    ])
