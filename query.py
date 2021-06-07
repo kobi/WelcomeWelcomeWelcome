@@ -105,10 +105,14 @@ def remove_duplicated_lines(full_srt_string):
 
 def query_episode(episode, query):
     print(episode['srt_path'])
-    with open(episode['srt_path'], 'r') as file:
-        full_srt_string = file.read()
-    full_srt_string = remove_duplicated_lines(full_srt_string)
-    episode['episode_length'] = get_episode_length_seconds(full_srt_string)
+    if 'full_str_string' not in episode:
+        with open(episode['srt_path'], 'r') as file:
+            full_srt_string = file.read()
+        full_srt_string = remove_duplicated_lines(full_srt_string)
+        episode['full_str_string'] = full_srt_string
+        episode['episode_length'] = get_episode_length_seconds(full_srt_string)
+    else:
+        full_srt_string = episode['full_str_string']
     for quote_index, quote in enumerate(query):
         str_regex = pattern_to_regex_words_only(quote['pattern'])
         matches = list(str_regex.finditer(full_srt_string))
@@ -218,6 +222,6 @@ print(len(episodes))
 # # print(full_report_to_html(report, query_welcome_welcome_welcome))
 
 build_html_file([
-        build_html_report('welcome', query_welcome_welcome_welcome, ['abacus']),
-        build_html_report('presidents', query_presidents, [])
-    ])
+    build_html_report('welcome', query_welcome_welcome_welcome, ['abacus']),
+    build_html_report('presidents', query_presidents, [])
+])
