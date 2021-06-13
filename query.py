@@ -166,13 +166,14 @@ def get_statistics_by_group(full_report, key_func):
         combined = list(combine_quotes(list(episodes)))
         yield (key, combined)
 
-def full_report_to_html(report, query, css_classes: List[str]):
+def full_report_to_html(report, query, css_classes: List[str], season_headers: List[str]):
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
     html_chunks.append(f'<div class="chart {" ".join(css_classes)}">')
     for season, episodes in by_season:
         html_chunks.append(f'<div class="season season{season:02d}" data-season="{season:02d}">')
+        html_chunks.append(f'<h2>{season_headers[season-1]}</h2>')
         for episode in episodes:
             episode_length = episode['episode_length']
             html_chunks.append(f'  <div class="episode episode{episode["episode"]:02d}" data-episode-length="{episode_length}">')
@@ -196,9 +197,9 @@ def full_report_to_html(report, query, css_classes: List[str]):
     return "\n".join(html_chunks)
 
 
-def build_html_report(report_name: str, query, css_classes: List[str]):
+def build_html_report(report_name: str, query, css_classes: List[str], season_headers: List[str]):
     report = list(query_all_episodes(episodes, query))
-    full_report_html = full_report_to_html(report, query, [report_name] + css_classes)
+    full_report_html = full_report_to_html(report, query, [report_name] + css_classes, season_headers)
 
     print('groups:')
     report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
@@ -232,9 +233,11 @@ print(len(episodes))
 
 # # print(full_report_to_html(report, query_welcome_welcome_welcome))
 
+years = range(2014, 2022)
+
 build_html_file([
-    build_html_report('welcome', query_welcome_welcome_welcome, ['abacus']),
-    build_html_report('presidents', query_presidents, ['demrep']),
-    build_html_report('parties', query_parties, ['demrep']),
-    build_html_report('seasonal', query_seasonal, []),
+    build_html_report('welcome', query_welcome_welcome_welcome, ['abacus'], years),
+    build_html_report('presidents', query_presidents, ['demrep'], years),
+    build_html_report('parties', query_parties, ['demrep'], years),
+    build_html_report('seasonal', query_seasonal, [], years),
 ])
