@@ -177,14 +177,14 @@ def full_report_to_html(report, query, css_classes: List[str], season_headers: L
         for episode in episodes:
             episode_length = episode['episode_length']
             html_chunks.append(f'  <div class="episode episode{episode["episode"]:02d}" data-episode-length="{episode_length}">')
-            for quote in episode['quotes']:
+            quote_time_pairs = [(quote, timestamp_seconds) for quote in episode['quotes'] for timestamp_seconds in quote['times']]
+            for quote, timestamp_seconds in sorted(quote_time_pairs, key=lambda x: x[1]):
                 quote_index = quote['quote_index']
-                for timestamp_seconds in quote['times']:
-                    relative_position = 100*timestamp_seconds / episode_length
-                    relative_position_round = round(relative_position, 2)
-                    title = html.escape(quote["quote_title"])
-                    html_chunks.append(f'    <div class="marker marker{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_round}" style="left: {relative_position_round}%;">')
-                    html_chunks.append('    </div>')
+                relative_position = 100*timestamp_seconds / episode_length
+                relative_position_round = round(relative_position, 2)
+                title = html.escape(quote["quote_title"])
+                html_chunks.append(f'    <div class="marker marker{quote_index}" data-timestamp="{timestamp_seconds}" title="{title}" data-relative-position="{relative_position_round}" style="left: {relative_position_round}%;">')
+                html_chunks.append('    </div>')
             html_chunks.append('  </div>')
         html_chunks.append('</div>')
     html_chunks.append('  <div class="ledend">')
