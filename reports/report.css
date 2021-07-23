@@ -11,8 +11,8 @@
 
 * { box-sizing: border-box; }
 
-.chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 600px; margin: 0 auto; }
-.season { flex: auto; width: 12%; background-color: var(--bg-light); padding: 4px; }
+.chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 800px; margin: 0 auto 2rem; }
+.season { flex: auto; width: 12%; background-color: var(--bg-light); padding: 8px; }
 .season:nth-child(2n) { background-color:var(--bg-lighter); }
 .episode {height: var(--episode-height);  margin: 0 0 1pt; position: relative;
   background-color: var(--episode-bg); 
@@ -38,7 +38,6 @@
 .parties .marker0 {background-color:#6695db;} /* democrats */
 .parties .marker1 {background-color:#a51a1f; z-index: 0;} /* repuclicans */
 
-
 .marker { background-color: cadetblue; opacity: 0.7; border-radius: var(--marger-size); }
 .marker0 { background-color: slateblue; }
 .marker1 { background-color: steelblue; }
@@ -53,8 +52,9 @@
 .welcome .marker0 { background-color: rgb(222, 142, 201); z-index: 4;} /* welcome */
 .welcome .marker0 ~ .marker1 { background-color: transparent; background: linear-gradient(to right, transparent 50%, rgb(156, 76, 154) 50%); } /* joining us - half circle after ".welcome" */
 .welcome .marker1 { background-color: rgb(156, 76, 154); opacity: 1; z-index: 5;} /* joining us - full circle */
-.welcome .marker2 { background-color: rgb(114, 55, 0); } /* main story */
-.welcome .marker3 { background-color: black; box-shadow: 0 0 3px 0 white inset; } /* blank void */
+.welcome .marker2 { background-color: #396498; opacity: 1; z-index: 0; } /* main story */
+.welcome .marker4 + .marker2 { background-color: transparent; background: linear-gradient(to right, transparent 50%, #396498 50%); z-index: 3; } /* main story */
+.welcome .marker3 { background-color: black; box-shadow: 0 0 3px 0 white inset; z-index: 5; } /* blank void */
 .welcome .marker4 { background-color: steelblue; } /* now this */
 .welcome .marker5 { background-color: rgb(223, 175, 19); } /* it's true */
 .welcome .marker6 { background-color: rgb(68, 133, 24) } /* that's our show */
@@ -62,8 +62,8 @@
 .abacus .episode {background: transparent;}
 .abacus .episode::before {background: var(--episode-bg); position:absolute; left:0; right:calc(var(--marger-size) * -1); top:50%; height:1pt; content:'';}
 
-.ledend { margin: 5px auto; }
-.ledend .group {display: inline-block}
+.ledend { margin: 5px auto; padding: 0 3rem; }
+.ledend .group {display: inline-block; margin-right: 1rem;}
 .ledend .group .marker {display:inline-block; width: var(--episode-height); height: var(--episode-height);
             margin:0 3px;}
 
@@ -71,7 +71,7 @@
     text-align: center;
     font-size: 11pt;
     font-weight: normal;
-    margin: 5pt 0 3pt;
+    margin: 0 0 3pt;
 }
 
 /* diferent seasons started at different times. not worth automating. maybe could've used a table. */
