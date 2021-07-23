@@ -11,7 +11,7 @@ import html
 
 query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
-    {'title': 'I\'m John Oliver', 'pattern':['i.?m', 'john', 'oliver']},
+    # {'title': 'I\'m John Oliver', 'pattern':['i.?m', 'john', 'oliver']},
     {'title': 'Thank you for joining us', 'pattern':['Thank', 'you(?: so much)?', 'for', 'joining', 'us']},
     {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
     {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
@@ -236,7 +236,7 @@ print(len(episodes))
 years = range(2014, 2022)
 
 build_html_file([
-    build_html_report('welcome', query_welcome_welcome_welcome, ['abacus'], years),
+    build_html_report('welcome', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
     build_html_report('presidents', query_presidents, ['demrep'], years),
     build_html_report('parties', query_parties, ['demrep'], years),
     build_html_report('seasonal', query_seasonal, [], years),
