@@ -13,11 +13,11 @@ query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
     # {'title': 'I\'m John Oliver', 'pattern':['i.?m', 'john', 'oliver']},
     {'title': 'Thank you for joining us', 'pattern':['Thank', 'you(?: so much)?', 'for', 'joining', 'us']},
-    {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
-    {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
+    {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
     {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
     {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']},
+    {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
 ]
 
 query_presidents = [

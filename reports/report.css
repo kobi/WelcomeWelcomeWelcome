@@ -52,12 +52,13 @@
 .welcome .marker0 { background-color: rgb(222, 142, 201); z-index: 4;} /* welcome */
 .welcome .marker0 ~ .marker1 { background-color: transparent; background: linear-gradient(to right, transparent 50%, rgb(156, 76, 154) 50%); } /* joining us - half circle after ".welcome" */
 .welcome .marker1 { background-color: rgb(156, 76, 154); opacity: 1; z-index: 5;} /* joining us - full circle */
-.welcome .marker2 { background-color: #396498; opacity: 1; z-index: 0; } /* main story */
-.welcome .marker4 + .marker2 { background-color: transparent; background: linear-gradient(to right, transparent 50%, #396498 50%); z-index: 3; } /* main story */
-.welcome .marker3 { background-color: black; box-shadow: 0 0 3px 0 white inset; z-index: 5; } /* blank void */
-.welcome .marker4 { background-color: steelblue; } /* now this */
-.welcome .marker5 { background-color: rgb(223, 175, 19); } /* it's true */
-.welcome .marker6 { background-color: rgb(68, 133, 24) } /* that's our show */
+.welcome .marker2 { background-color: steelblue; } /* now this */
+.welcome .marker3 { background-color: #396498; opacity: 1; z-index: 0; } /* main story */
+.welcome .marker2 + .marker3 { background-color: transparent; background: linear-gradient(to right, transparent 50%, #396498 50%); z-index: 3; } /* main story */
+.welcome .marker4 { background-color: rgb(223, 175, 19); } /* it's true */
+.welcome .marker5 { background-color: rgb(68, 133, 24) } /* that's our show */
+.welcome .marker6 { background-color: black; box-shadow: 0 0 3px 0 white inset; z-index: 5; } /* blank void */
+
 
 .abacus .episode {background: transparent;}
 .abacus .episode::before {background: var(--episode-bg); position:absolute; left:0; right:calc(var(--marger-size) * -1); top:50%; height:1pt; content:'';}
