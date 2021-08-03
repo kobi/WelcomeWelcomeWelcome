@@ -12,7 +12,7 @@ import html
 query_welcome_welcome_welcome = [
     {'title': 'Welcome Welcome Welcome', 'pattern':['welcome', 'welcome', 'welcome']},
     # {'title': 'I\'m John Oliver', 'pattern':['i.?m', 'john', 'oliver']},
-    {'title': 'Thank you for joining us', 'pattern':['Thank', 'you(?: so much)?', 'for', 'joining', 'us']},
+    {'title': 'Thank you for joining us', 'pattern':['Thank', r'you(?: so much)?', 'for', r'joining|being\W+with', 'us']},
     {'title': 'And now... this', 'pattern':['and', 'now', 'this']},
     {'title': 'Our main story', 'pattern':['our', 'main', 'story']},
     {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
@@ -166,10 +166,11 @@ def get_statistics_by_group(full_report, key_func):
         combined = list(combine_quotes(list(episodes)))
         yield (key, combined)
 
-def full_report_to_html(report, query, css_classes: List[str], season_headers: List[str]):
+def full_report_to_html(report, report_title: str, query, css_classes: List[str], season_headers: List[str]):
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
+    html_chunks.append(f'<h1>{report_title}</h1>')
     html_chunks.append(f'<div class="chart {" ".join(css_classes)}">')
     for season, episodes in by_season:
         html_chunks.append(f'<div class="season season{season:02d}" data-season="{season:02d}">')
@@ -197,9 +198,9 @@ def full_report_to_html(report, query, css_classes: List[str], season_headers: L
     return "\n".join(html_chunks)
 
 
-def build_html_report(report_name: str, query, css_classes: List[str], season_headers: List[str]):
+def build_html_report(report_name: str, title: str, query, css_classes: List[str], season_headers: List[str]):
     report = list(query_all_episodes(episodes, query))
-    full_report_html = full_report_to_html(report, query, [report_name] + css_classes, season_headers)
+    full_report_html = full_report_to_html(report, title, query, [report_name] + css_classes, season_headers)
 
     print('groups:')
     report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
@@ -236,8 +237,8 @@ print(len(episodes))
 years = range(2014, 2022)
 
 build_html_file([
-    build_html_report('welcome', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
-    build_html_report('presidents', query_presidents, ['demrep'], years),
-    build_html_report('parties', query_parties, ['demrep'], years),
-    build_html_report('seasonal', query_seasonal, [], years),
+    build_html_report('welcome', 'Things John Oliver Says', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
+    build_html_report('presidents', 'Presidents', query_presidents, ['demrep'], years),
+    build_html_report('parties', 'Democrat/Republican', query_parties, ['demrep'], years),
+    build_html_report('seasonal', 'Seasonal', query_seasonal, [], years),
 ])
