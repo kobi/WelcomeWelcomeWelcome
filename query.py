@@ -22,7 +22,7 @@ query_welcome_welcome_welcome = [
 
 query_presidents = [
     # {'title':'Bush', 'pattern': [r'\bbush']}, # alsmost no mentiones of Bush
-    {'title':'Obama', 'pattern': [r'\bobama']},
+    {'title':'Obama', 'pattern': [r'\bobama\b']}, # \b so we don't count obamacare
     {'title':'Clinton', 'pattern': [r'\bclinton']},
     {'title':'Trump', 'pattern': [r'\btrump']},
     {'title':'Biden', 'pattern': [r'\bbiden']},
@@ -166,7 +166,7 @@ def get_statistics_by_group(full_report, key_func):
         combined = list(combine_quotes(list(episodes)))
         yield (key, combined)
 
-def full_report_to_html(report, report_title: str, query, css_classes: List[str], season_headers: List[str]):
+def full_report_to_html(report, report_summary, report_title: str, query, css_classes: List[str], season_headers: List[str]):
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
@@ -189,9 +189,11 @@ def full_report_to_html(report, report_title: str, query, css_classes: List[str]
             html_chunks.append('  </div>')
         html_chunks.append('</div>')
     html_chunks.append('  <div class="ledend">')
+    _, quote_summaries = report_summary[0]
     for i, q in enumerate(query):
         title = html.escape(q["title"])
-        html_chunks.append(f'   <div class="group group{i}"><div class="marker marker{i}"></div>{title}</div>')
+        quote_total = next(rs['total_count'] for rs in quote_summaries if rs['quote_title'] == q['title'])
+        html_chunks.append(f'   <div class="group group{i}"><div class="marker marker{i}"></div>{title} <span class="count">{quote_total}</span></div>')
     html_chunks.append('  </div>')
 
     html_chunks.append('</div>')    
@@ -201,12 +203,12 @@ def full_report_to_html(report, report_title: str, query, css_classes: List[str]
 def build_html_report(report_name: str, title: str, query, css_classes: List[str], season_headers: List[str]):
     report = list(query_all_episodes(episodes, query))
     # report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
-    report_total = list(get_statistics_by_group(report, lambda _: 'Total'))
-    full_report_html = full_report_to_html(report, title, query, [report_name] + css_classes, season_headers)
-
+    report_summary = list(get_statistics_by_group(report, lambda _: 'Total'))
     print('groups:')
     # print('report_per_season = ', report_per_season)
-    print('report_total = ', report_total)
+    print('report_total = ', report_summary)
+
+    full_report_html = full_report_to_html(report, report_summary, title, query, [report_name] + css_classes, season_headers)
 
     return '\n\n'.join([full_report_html])
 

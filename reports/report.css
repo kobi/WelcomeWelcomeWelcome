@@ -68,9 +68,10 @@ h1 small {display:block; color:#B80425; opacity:0.9; font-size: 0.6em;}
 .abacus .episode::before {background: var(--episode-bg); position:absolute; left:0; right:calc(var(--marger-size) * -1); top:50%; height:1pt; content:'';}
 
 .ledend { margin: 5px auto; padding: 0 3rem; }
-.ledend .group {display: inline-block; margin-right: 1rem;}
+.ledend .group {display: inline-block; margin-right: 1rem; margin-bottom: 0.7rem;}
 .ledend .group .marker {display:inline-block; width: var(--episode-height); height: var(--episode-height);
             margin:0 3px;}
+.ledend .group .count {font-weight: bold; color:crimson; font-size: 0.8em; display: inline-block; margin: 0 6pt;}
 
 .season > h2 {
     text-align: center;
