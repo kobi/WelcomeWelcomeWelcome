@@ -5,9 +5,12 @@
     --episode-bg: #00000011;
     --episode-height: 8pt;
     --marger-size: 8pt;
+    --bg-less-light:rgb(239, 239, 239);
     --bg-light:rgb(245, 245, 245);
     --bg-lighter:rgb(252, 252, 252);
 }
+
+body { background-color: var(--bg-less-light); }
 
 * { box-sizing: border-box; }
 
@@ -71,7 +74,7 @@ h1 small {display:block; color:#B80425; opacity:0.9; font-size: 0.6em;}
 .ledend .group {display: inline-block; margin-right: 1rem; margin-bottom: 0.7rem;}
 .ledend .group .marker {display:inline-block; width: var(--episode-height); height: var(--episode-height);
             margin:0 3px;}
-.ledend .group .count {font-weight: bold; color:crimson; font-size: 0.8em; display: inline-block; margin: 0 6pt;}
+.ledend .group .count {color:crimson; display: inline-block; margin: 0 6pt 0 4pt;}
 
 .season > h2 {
     text-align: center;

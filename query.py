@@ -18,6 +18,7 @@ query_welcome_welcome_welcome = [
     {'title': 'it\'s true!', 'pattern':[r'\bit.?s', 'true']},
     {'title': 'That\'s our show', 'pattern':['that.?s', 'our', 'show']},
     {'title': 'Blank Void', 'pattern':[r'(?:blank|empty|white|this|the)' ,r'\bvoid\b']},
+    # {'title': 'Moving on', 'pattern':[r'moving' ,r'on']},  # 245 times, but boring
 ]
 
 query_presidents = [
@@ -238,7 +239,7 @@ print(len(episodes))
 years = range(2014, 2022)
 
 build_html_file([
-    build_html_report('welcome', 'Things <small>John Oliver</small> Says', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
+    build_html_report('welcome', 'Things <small>John Oliver</small> Says<br>every week', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
     build_html_report('presidents', 'Politics', query_presidents, ['demrep'], years),
     build_html_report('parties', '', query_parties, ['demrep'], years),
     build_html_report('seasonal', 'Seasonal', query_seasonal, [], years),
