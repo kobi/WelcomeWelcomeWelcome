@@ -200,13 +200,12 @@ def full_report_to_html(report, report_title: str, query, css_classes: List[str]
 
 def build_html_report(report_name: str, title: str, query, css_classes: List[str], season_headers: List[str]):
     report = list(query_all_episodes(episodes, query))
+    # report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
+    report_total = list(get_statistics_by_group(report, lambda _: 'Total'))
     full_report_html = full_report_to_html(report, title, query, [report_name] + css_classes, season_headers)
 
     print('groups:')
-    report_per_season = list(get_statistics_by_group(report, lambda episode: episode['season']))
-    print('report_per_season = ', report_per_season)
-
-    report_total = list(get_statistics_by_group(report, lambda _: 'Total'))
+    # print('report_per_season = ', report_per_season)
     print('report_total = ', report_total)
 
     return '\n\n'.join([full_report_html])
@@ -237,8 +236,8 @@ print(len(episodes))
 years = range(2014, 2022)
 
 build_html_file([
-    build_html_report('welcome', 'Things John Oliver Says', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
-    build_html_report('presidents', 'Presidents', query_presidents, ['demrep'], years),
-    build_html_report('parties', 'Democrat/Republican', query_parties, ['demrep'], years),
+    build_html_report('welcome', 'Things <small>John Oliver</small> Says', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
+    build_html_report('presidents', 'Politics', query_presidents, ['demrep'], years),
+    build_html_report('parties', '', query_parties, ['demrep'], years),
     build_html_report('seasonal', 'Seasonal', query_seasonal, [], years),
 ])
