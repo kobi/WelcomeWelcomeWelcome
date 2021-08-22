@@ -19,7 +19,8 @@ h1 { text-align: left; margin-bottom: 4pt; font-size: 3rem;
     font-weight: 300; font-family: 'Roboto', sans-serif; text-transform: uppercase; }
 h1 small {display:block; color:#B80425; opacity:0.9; font-size: 0.6em;}
 h1 section:empty { display:none; }
-h1 section { border-top: solid 0.5pt gray; display:inline-block; }
+h1 section { border-top: solid 0.5pt gray; display:inline-block; font-size: 1.1em;}
+h1 .comment { float:right; color: gray; font-size: 10pt; text-align: right;}
 h1.parties {display: none;}
 .chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 800px; margin: 0 auto 2rem; }
 .season { flex: auto; width: 12%; background-color: var(--bg-light); padding: 8px; }
@@ -73,11 +74,11 @@ h1.parties {display: none;}
 .abacus .episode {background: transparent;}
 .abacus .episode::before {background: var(--episode-bg); position:absolute; left:0; right:calc(var(--marger-size) * -1); top:50%; height:1pt; content:'';}
 
-.ledend { margin: 5px auto; padding: 0 3rem; }
-.ledend .group {display: inline-block; margin-right: 1rem; margin-bottom: 0.7rem;}
-.ledend .group .marker {display:inline-block; width: var(--episode-height); height: var(--episode-height);
+.legend { margin: 5px auto; padding: 0 3rem; text-align: center; }
+.legend .group {display: inline-block; margin-right: 1rem; margin-bottom: 0.7rem;}
+.legend .group .marker {display:inline-block; width: var(--episode-height); height: var(--episode-height);
             margin:0 3px;}
-.ledend .group .count {color:crimson; display: inline-block; margin: 0 6pt 0 4pt;}
+.legend .group .count {color:crimson; display: inline-block; margin: 0 6pt 0 4pt;}
 
 .season > h2 {
     text-align: center;

@@ -171,7 +171,9 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
-    html_chunks.append(f'<h1 class="{" ".join(css_classes)}">Things <small>John Oliver</small> Says')
+    html_chunks.append(f'<h1 class="{" ".join(css_classes)}">')
+    html_chunks.append(f'<div class="comment">source: subtitles of Last Week Tonight.<br/>@kobi</div>')
+    html_chunks.append(f'Things <small>John Oliver</small> Says')
     if report_title:
         html_chunks.append(f'<br/><section>{report_title}</section></h1>')
     html_chunks.append('</h1>')
@@ -192,7 +194,7 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
                 html_chunks.append('    </div>')
             html_chunks.append('  </div>')
         html_chunks.append('</div>')
-    html_chunks.append('  <div class="ledend">')
+    html_chunks.append('  <div class="legend">')
     _, quote_summaries = report_summary[0]
     for i, q in enumerate(query):
         title = html.escape(q["title"])
