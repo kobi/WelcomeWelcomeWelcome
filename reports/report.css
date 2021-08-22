@@ -18,6 +18,9 @@ h1 { text-align: left; margin-bottom: 4pt; font-size: 3rem;
     transform: scaleY(0.9); width:800px; margin: 0 auto;
     font-weight: 300; font-family: 'Roboto', sans-serif; text-transform: uppercase; }
 h1 small {display:block; color:#B80425; opacity:0.9; font-size: 0.6em;}
+h1 section:empty { display:none; }
+h1 section { border-top: solid 0.5pt gray; display:inline-block; }
+h1.parties {display: none;}
 .chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 800px; margin: 0 auto 2rem; }
 .season { flex: auto; width: 12%; background-color: var(--bg-light); padding: 8px; }
 .season:nth-child(2n) { background-color:var(--bg-lighter); }

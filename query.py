@@ -171,7 +171,10 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
-    html_chunks.append(f'<h1>{report_title}</h1>')
+    html_chunks.append(f'<h1 class="{" ".join(css_classes)}">Things <small>John Oliver</small> Says')
+    if report_title:
+        html_chunks.append(f'<br/><section>{report_title}</section></h1>')
+    html_chunks.append('</h1>')
     html_chunks.append(f'<div class="chart {" ".join(css_classes)}">')
     for season, episodes in by_season:
         html_chunks.append(f'<div class="season season{season:02d}" data-season="{season:02d}">')
@@ -239,7 +242,7 @@ print(len(episodes))
 years = range(2014, 2022)
 
 build_html_file([
-    build_html_report('welcome', 'Things <small>John Oliver</small> Says<br>every week', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
+    build_html_report('welcome', '', query_welcome_welcome_welcome, ['abacus', 'XXfullwidth'], years),
     build_html_report('presidents', 'Politics', query_presidents, ['demrep'], years),
     build_html_report('parties', '', query_parties, ['demrep'], years),
     build_html_report('seasonal', 'Seasonal', query_seasonal, [], years),
