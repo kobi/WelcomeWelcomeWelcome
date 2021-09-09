@@ -31,7 +31,7 @@ query_presidents = [
 
 query_parties = [
     {'title':'Democrats', 'pattern': [r'\bdemocrat']},
-    {'title':'Republicans', 'pattern': [r'\brepublican|\bg\.?o\.p\b']},
+    {'title':'Republicans', 'pattern': [r'\brepublican|\bg\.?o\.?p\b']},
 ]
 
 query_seasonal = [
@@ -171,8 +171,10 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
     by_season = groupby(report, lambda episode: episode['season'])
     html_chunks = []
     # let's write html like it's 1999.
+    html_chunks.append(f'<div class="wrapper">')
     html_chunks.append(f'<h1 class="{" ".join(css_classes)}">')
-    html_chunks.append(f'<div class="comment">source: subtitles of Last Week Tonight.<br/>@kobi</div>')
+    html_chunks.append(f'<div class="comment">source: subtitles of Last Week Tonight with John Oliver.<br/>')
+    html_chunks.append(f'github.com/kobi/WelcomeWelcomeWelcome<br/>@kobi</div>')
     html_chunks.append(f'Things <small>John Oliver</small> Says')
     if report_title:
         html_chunks.append(f'<br/><section>{report_title}</section></h1>')
@@ -200,9 +202,9 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
         title = html.escape(q["title"])
         quote_total = next(rs['total_count'] for rs in quote_summaries if rs['quote_title'] == q['title'])
         html_chunks.append(f'   <div class="group group{i}"><div class="marker marker{i}"></div>{title} <span class="count">{quote_total}</span></div>')
-    html_chunks.append('  </div>')
-
-    html_chunks.append('</div>')    
+    html_chunks.append('  </div>') # legend
+    html_chunks.append('</div>') #chart
+    html_chunks.append('</div>') # wrapper
     return "\n".join(html_chunks)
 
 

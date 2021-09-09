@@ -14,15 +14,17 @@ body { background-color: var(--bg-less-light); }
 
 * { box-sizing: border-box; }
 
+.wrapper {padding: 20px; width:880px; margin: 0 auto;}
+
 h1 { text-align: left; margin-bottom: 4pt; font-size: 3rem;
-    transform: scaleY(0.9); width:800px; margin: 0 auto;
+    transform: scaleY(0.9); width: 100%; margin: 0 auto;
     font-weight: 300; font-family: 'Roboto', sans-serif; text-transform: uppercase; }
 h1 small {display:block; color:#B80425; opacity:0.9; font-size: 0.6em;}
 h1 section:empty { display:none; }
 h1 section { border-top: solid 0.5pt gray; display:inline-block; font-size: 1.1em;}
 h1 .comment { float:right; color: gray; font-size: 10pt; text-align: right;}
 h1.parties {display: none;}
-.chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 800px; margin: 0 auto 2rem; }
+.chart { display: flex; flex-direction: row; flex-wrap: wrap; width: 100%; margin: 0; }
 .season { flex: auto; width: 12%; background-color: var(--bg-light); padding: 8px; }
 .season:nth-child(2n) { background-color:var(--bg-lighter); }
 .episode {height: var(--episode-height);  margin: 0 0 1pt; position: relative;
