@@ -201,7 +201,7 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
     for i, q in enumerate(query):
         title = html.escape(q["title"])
         quote_total = next(rs['total_count'] for rs in quote_summaries if rs['quote_title'] == q['title'])
-        html_chunks.append(f'   <div class="group group{i}"><div class="marker marker{i}"></div>{title} <span class="count">{quote_total}</span></div>')
+        html_chunks.append(f'   <div class="group group{i}"><div class="marker marker{i}"></div>{title} <span class="count">{quote_total:,}</span></div>')
     html_chunks.append('  </div>') # legend
     html_chunks.append('</div>') #chart
     html_chunks.append('</div>') # wrapper
