@@ -8,13 +8,14 @@
     --bg-less-light:rgb(239, 239, 239);
     --bg-light:rgb(245, 245, 245);
     --bg-lighter:rgb(252, 252, 252);
+    --chart-width: 700pt;
 }
 
 body { background-color: var(--bg-less-light); }
 
 * { box-sizing: border-box; }
 
-.wrapper {padding: 20px; width:880px; margin: 0 auto;}
+.wrapper {padding: 20px; width:var(--chart-width); margin: 0 auto;}
 
 h1 { text-align: left; margin-bottom: 4pt; font-size: 3rem;
     transform: scaleY(0.9); width: 100%; margin: 0 auto;
@@ -70,7 +71,8 @@ h1.parties {display: none;}
 .welcome .marker2 + .marker3 { background-color: transparent; background: linear-gradient(to right, transparent 50%, #396498 50%); z-index: 3; } /* main story */
 .welcome .marker4 { background-color: rgb(223, 175, 19); } /* it's true */
 .welcome .marker5 { background-color: rgb(68, 133, 24) } /* that's our show */
-.welcome .marker6 { background-color: black; box-shadow: 0 0 3px 0 white inset; z-index: 5; } /* blank void */
+/* .welcome .marker6 { background-color: black; box-shadow: 0 0 3px 0 white inset; z-index: 5; } blank void */
+.welcome .marker6 { background-color: white; box-shadow: 0 0 2px 1px black inset; z-index: 5; } /* blank void */
 
 
 .abacus .episode {background: transparent;}
