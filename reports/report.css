@@ -72,7 +72,7 @@ h1.parties {display: none;}
 .welcome .marker4 { background-color: rgb(223, 175, 19); } /* it's true */
 .welcome .marker5 { background-color: rgb(68, 133, 24) } /* that's our show */
 /* .welcome .marker6 { background-color: black; box-shadow: 0 0 3px 0 white inset; z-index: 5; } blank void */
-.welcome .marker6 { background-color: white; box-shadow: 0 0 2px 1px black inset; z-index: 5; } /* blank void */
+.welcome .marker6 { background-color: white; box-shadow: 0 0 2px 1px #111e inset; z-index: 5; } /* blank void */
 
 
 .abacus .episode {background: transparent;}
