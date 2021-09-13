@@ -173,7 +173,8 @@ def full_report_to_html(report, report_summary, report_title: str, query, css_cl
     # let's write html like it's 1999.
     html_chunks.append(f'<div class="wrapper">')
     html_chunks.append(f'<h1 class="{" ".join(css_classes)}">')
-    html_chunks.append(f'<div class="comment">source: subtitles of Last Week Tonight with John Oliver.<br/>')
+    html_chunks.append(f'<div class="comment">source: subtitles of Last Week Tonight with John Oliver<br/>')
+    html_chunks.append(f'Includes all dialogue: host, narrator, and clips<br/>')
     html_chunks.append(f'github.com/kobi/WelcomeWelcomeWelcome<br/>@kobi</div>')
     html_chunks.append(f'Things <small>John Oliver</small> Says')
     if report_title:
