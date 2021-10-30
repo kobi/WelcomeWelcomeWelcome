@@ -45,6 +45,15 @@ query_test = [
     {'title':'on site', 'pattern': ['on','site', 'as']},
 ]
 
+
+query_requests = [
+    {'title':'Holy Shit!', 'pattern': ['holy', 'shit']},
+    # {'title':'Holy Fuck!', 'pattern': ['holy', 'fuck']}, # just 6
+    # {'title':'Cool', 'pattern': [r'\bcool\b']}, # 117, pretty random.
+    {'title':'the point is', 'pattern': [r'\b(?:the|that|my)\b', 'point', 'is']},
+    {'title':'the fact is', 'pattern': [r'\b(?:the|that|my)\b', 'fact', 'is']},
+]
+
 # presidents?
 # dems/reps?
 # virus?
@@ -251,4 +260,5 @@ build_html_file([
     build_html_report('presidents', 'Politics', query_presidents, ['demrep'], years),
     build_html_report('parties', '', query_parties, ['demrep'], years),
     build_html_report('seasonal', 'Seasonal', query_seasonal, [], years),
+    build_html_report('requests', 'Reddit Requests', query_requests, [], years),
 ])
